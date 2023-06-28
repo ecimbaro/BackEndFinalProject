@@ -1,44 +1,82 @@
 import { Request, Response } from "express";
-import Model, { IModel } from "../models/model";
+import Model, { ICountry } from "../models/model";
+import { APICountry } from './interfaces';
+import axios from 'axios'
 
-export const AddProduct = async (req: Request, res: Response) => {
+
+
+export const addCountry = async (req: Request, res: Response) => {
   try {
-    const { name, description } = req.body;
-    const newProduct: IModel = new Model({
-      name,
-      description,
-    });
-    await newProduct.save();
+    const countryID: String = req.params.country;
+    const options = {
+      method: 'GET',
+      url: `https://wft-geo-db.p.rapidapi.com/v1/geo/countries/${countryID}`,
+      headers: {
+        'X-RapidAPI-Key': 'f1d4e524d0msh8c625b23775049cp16800djsn4a8d95a2c165',
+        'X-RapidAPI-Host': 'wft-geo-db.p.rapidapi.com'
+      }
+    };
+    const { data } = await axios.request(options);
+    console.log(data)
+    const country: ICountry = new Model({
+      capital: data.data.capital,
+      code: data.data.code,
+      callingCode: data.data.callingCode,
+      flagImageUri: data.data.flagImageUri,
+      name: data.data.name,
+      numRegions: data.data.numRegions,
+      wikiDataId: data.data.wikiDataId,
+    })
+    const createdCountry = await Model.create(country);
+
     return res.status(201).json({
-      message: "Producto creado con éxito",
+      message: "Información guardada con éxito",
+      country: createdCountry,
     });
   } catch (error) {
-    res.status(500).json({ error: "Error al registrar el producto" });
+    res.status(500).json({ error: "Error al registrar la información" });
   }
 };
 
-export const getProducts = async (req: Request, res: Response) => {
+export const getCountry = async (req: Request, res: Response) => {
   try {
-    const products = await Model.find();
-    res.json(products);
+    const city = await Model.find();
+    res.json(city);
   } catch (error) {
-    res.status(500).json({ error: "No se encuentra el producto" });
+    res.status(500).json({ error: "No se encuentra la información solicitadad" });
   }
 };
 
-export const deleteProduct = async (req: Request, res: Response) => {
+export const deleteCountry = async (req: Request, res: Response) => {
   try {
-    const productID = req.params.id;
-    await Model.findByIdAndDelete(productID);
-    res.json({ message: "Producto eliminado" });
+    const countryID = req.params.id;
+    await Model.findByIdAndDelete(countryID);
+    res.json({ message: "Información eliminada" });
   } catch (error) {
     res.status(500).json({ error });
   }
 };
 
-export const updateProducts = async (req: Request, res: Response) => {
-  const productID = req.params.id;
-  await Model.findByIdAndUpdate(productID);
-  
+export const updateCountry = async (req: Request, res: Response) => {
+  try {
+    const countryID = req.params.id;
+    const {
+      capital,
+      code,
+      callingCode,
+      flagImageUri,
+      name,
+      numRegions,
+      wikiDataId
+    } = req.body;
+    await Model.findOneAndUpdate(
+      { _id: countryID },
+      { capital, code, callingCode, flagImageUri, name, numRegions, wikiDataId },
+      { new: true }
+    );
+    res.status(200).json({ message: 'Información actualizada con éxito' })
+  } catch (error) {
+    res.json({ message: error })
+  }
 
 };

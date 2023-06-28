@@ -1,9 +1,13 @@
 import express from "express";
 const router = express.Router();
-import { AddProduct, deleteProduct, getProducts } from "../controllers/controllers";
+import { addCountry, deleteCountry, getCountry, updateCountry } from "../controllers/controllers";
+import { prefixValidator } from '../utils/middleware/prefixValidator';
+import { IDValidator } from '../utils/middleware/idValidator';
 
-router.post("/add", AddProduct);
-router.get('/show', getProducts)
-router.delete('/delete/:id', deleteProduct)
+
+router.get("/show", getCountry);
+router.post("/country/:country",prefixValidator, addCountry);
+router.delete("/delete/:id", IDValidator, deleteCountry);
+router.put('/update', updateCountry)
 
 export default router;
