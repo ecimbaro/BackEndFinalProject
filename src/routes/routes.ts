@@ -6,8 +6,8 @@ import { IDValidator } from '../utils/middleware/idValidator';
 
 
 router.get("/show", getCountry);
-router.post("/country/:country",prefixValidator, addCountry);
-router.delete("/delete/:id", IDValidator, deleteCountry);
-router.put('/update', updateCountry)
+router.post("/country/:country", prefixValidator, addCountry);
+router.delete("/delete/:id",IDValidator, deleteCountry);
+router.put('/update/:id', updateCountry)
 
 export default router;

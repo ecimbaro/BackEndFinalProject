@@ -1,16 +1,8 @@
 import { NextFunction, Request, Response } from 'express'
 import { Model } from 'mongoose'
+import {param} from 'express-validator'
 
-export const IDValidator = async (req: Request, res: Response, next: NextFunction) => {
-    try {
-        const countryID: number | string = req.params.id
 
-        const country = await Model.findById(countryID)
-        if (!country) throw new Error('Invalid country / ID')
-    } catch (error) {
-        return res.status(500).json({ error })
-    }
-
-    next()
-}
-
+export const IDValidator = [
+    param('id').notEmpty().withMessage('ID requerido')
+]

@@ -1,18 +1,19 @@
 import { Request, Response } from "express";
 import Model, { ICountry } from "../models/model";
-import { APICountry } from './interfaces';
 import axios from 'axios'
+require('dotenv').config()
 
 
 
 export const addCountry = async (req: Request, res: Response) => {
+  let API_KEY = process.env.RAPIDAPI_KEY ||""
   try {
     const countryID: String = req.params.country;
     const options = {
       method: 'GET',
       url: `https://wft-geo-db.p.rapidapi.com/v1/geo/countries/${countryID}`,
       headers: {
-        'X-RapidAPI-Key': 'f1d4e524d0msh8c625b23775049cp16800djsn4a8d95a2c165',
+        'X-RapidAPI-Key': API_KEY, 
         'X-RapidAPI-Host': 'wft-geo-db.p.rapidapi.com'
       }
     };
@@ -51,9 +52,9 @@ export const deleteCountry = async (req: Request, res: Response) => {
   try {
     const countryID = req.params.id;
     await Model.findByIdAndDelete(countryID);
-    res.json({ message: "Información eliminada" });
+    return res.json({ message: "Información eliminada" });
   } catch (error) {
-    res.status(500).json({ error });
+   return res.status(500).json({ error });
   }
 };
 
