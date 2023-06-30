@@ -8,7 +8,8 @@ require('dotenv').config()
 export const addCountry = async (req: Request, res: Response) => {
   let API_KEY = process.env.RAPIDAPI_KEY ||""
   try {
-    const countryID: String = req.params.country;
+    const countryID: string = req.params.country;
+    
     const options = {
       method: 'GET',
       url: `https://wft-geo-db.p.rapidapi.com/v1/geo/countries/${countryID}`,
