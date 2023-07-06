@@ -6,15 +6,15 @@ require('dotenv').config()
 
 
 export const addCountry = async (req: Request, res: Response) => {
-  let API_KEY = process.env.RAPIDAPI_KEY ||""
+  let API_KEY = process.env.RAPIDAPI_KEY || ""
   try {
     const countryID: string = req.params.country;
-    
+
     const options = {
       method: 'GET',
       url: `https://wft-geo-db.p.rapidapi.com/v1/geo/countries/${countryID}`,
       headers: {
-        'X-RapidAPI-Key': API_KEY, 
+        'X-RapidAPI-Key': API_KEY,
         'X-RapidAPI-Host': 'wft-geo-db.p.rapidapi.com'
       }
     };
@@ -36,7 +36,7 @@ export const addCountry = async (req: Request, res: Response) => {
       country: createdCountry,
     });
   } catch (error) {
-    res.status(500).json({ error: "Error al registrar la información" });
+    res.status(500).json({ message: 'No pudo registrarse la información' });
   }
 };
 
@@ -55,7 +55,7 @@ export const deleteCountry = async (req: Request, res: Response) => {
     await Model.findByIdAndDelete(countryID);
     return res.json({ message: "Información eliminada" });
   } catch (error) {
-   return res.status(500).json({ error });
+    return res.status(500).json({ message: error });
   }
 };
 
